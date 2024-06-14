@@ -1,0 +1,185 @@
+<?php
+	// Note that this example is insecure as it is missing user checks, XSRF/CSRF token checking/generation, etc.
+	// The /files/ and /thumbs/ directories need to be writeable by the web server user (e.g. www-data).
+
+	// require_once "../js-fileexplorer/server-side-helpers/file_explorer_fs_helper.php";
+    require_once "./se_explorer_api.php";
+
+	$options = array(
+		"base_url" => "/",
+		"dot_folders" => false,  // .git, .svn, .DS_Store
+		"allowed_exts" => ".jpg, .jpeg, .png, .gif, .svg, .txt, .php, .html, .sql, .psql, .pgsql, .ttf, .woff, .woff2, .css, .js, .ts",
+		"allow_empty_ext" => true,
+	);
+
+	SimpleExplorerAPI::HandleActions("action", "file_explorer_", "/home/ryomario/Documents/lampp/htdocs", $options);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Explorer</title>
+    <link rel="stylesheet" href="./assets/styles.css">
+    <script src="./assets/simple-explorer.js"></script>
+</head>
+<body>
+    <div id="explorer" class="se_explorer">
+        <div class="se_explorer_toolbar">
+            <div class="se_explorer_navtools">
+                <button class="se_explorer_navtool_back disabled"></button>
+                <button class="se_explorer_navtool_forward"></button>
+                <button class="se_explorer_navtool_history"></button>
+                <button class="se_explorer_navtool_up"></button>
+            </div>
+            <div class="se_explorer_path_wrap">
+                <div class="se_explorer_path_icon"></div>
+                <div class="se_explorer_path_segments_scroll_wrap">
+                    <div class="se_explorer_path_segments">
+                        <div class="se_explorer_path_segment">
+                            <button class="se_explorer_path_name">htdocs (/)</button>
+                            <button class="se_explorer_path_opts"></button>
+                        </div>
+                        <div class="se_explorer_path_segment">
+                            <button class="se_explorer_path_name">dashboard</button>
+                            <button class="se_explorer_path_opts"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="se_explorer_body">
+            <table class="se_explorer_items_table">
+                <thead class="se_explorer_items_header">
+                    <tr>
+                        <th class="se_explorer_items_header_col">
+                            <button class="se_explorer_items_header_col_text">Action</button>
+                        </th>
+                        <th class="se_explorer_items_header_col flex-1 align_left">
+                            <button class="se_explorer_items_header_col_text">Name</button>
+                        </th>
+                        <th class="se_explorer_items_header_col">
+                            <button class="se_explorer_items_header_col_text">Mode</button>
+                        </th>
+                        <th class="se_explorer_items_header_col">
+                            <button class="se_explorer_items_header_col_text">Owner</button>
+                        </th>
+                        <th class="se_explorer_items_header_col">
+                            <button class="se_explorer_items_header_col_text">Group</button>
+                        </th>
+                        <th class="se_explorer_items_header_col">
+                            <button class="se_explorer_items_header_col_text">Size</button>
+                        </th>
+                        <th class="se_explorer_items_header_col">
+                            <button class="se_explorer_items_header_col_text">Modified</button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="se_explorer_items_scroll_wrap">
+                    <tr class="se_explorer_items_message se_explorer_hidden"><td colspan="7">Loading...</td></tr>
+                    <tr class="se_explorer_item_wrap">
+                        <td class="se_explorer_item_col"></td>
+                        <td class="se_explorer_item_col">
+                            <div class="se_explorer_item_name">
+                                <div class="se_explorer_item_name_icon se_explorer_item_name_icon_folder"></div>
+                                <div class="se_explorer_item_name_text">Folder</div>
+                            </div>
+                        </td>
+                        <td class="se_explorer_item_col text-muted">drwxrwxr-x</td>
+                        <td class="se_explorer_item_col text-muted">ryomario (1000)</td>
+                        <td class="se_explorer_item_col text-muted">www-data (33)</td>
+                        <td class="se_explorer_item_col text-muted">-</td>
+                        <td class="se_explorer_item_col text-muted">11/8/2023 8:43 AM</td>
+                    </tr>
+                    <tr class="se_explorer_item_wrap">
+                        <td class="se_explorer_item_col"></td>
+                        <td class="se_explorer_item_col">
+                            <div class="se_explorer_item_name">
+                                <div class="se_explorer_item_name_icon se_explorer_item_name_icon_file se_explorer_item_name_icon_ext_h" data-ext="HTML"></div>
+                                <div class="se_explorer_item_name_text">File</div>
+                            </div>
+                        </td>
+                        <td class="se_explorer_item_col text-muted">drwxrwxr-x</td>
+                        <td class="se_explorer_item_col text-muted">ryomario (1000)</td>
+                        <td class="se_explorer_item_col text-muted">www-data (33)</td>
+                        <td class="se_explorer_item_col text-muted">500KB</td>
+                        <td class="se_explorer_item_col text-muted">11/8/2023 8:43 AM</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="se_explorer_footer">
+            <div class="se_explorer_statusbar">
+                <div class="se_explorer_statusbar_text_wrap">
+                    <div class="se_explorer_statusbar_text_segment">30 items</div>
+                    <div class="se_explorer_statusbar_text_segment">2 items selected (300KB)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new SimpleExplorer(document.getElementById('explorer'),{
+            messagetimeout: 2000,
+            displayunits: 'iec_windows',
+            initpath: [
+                [ '', 'htdocs (/)', { canmodify: false } ]
+            ],
+            // doubleclickdelay: 10000,
+            langmap: {},
+            onrefresh: function(folder, required) {
+                // Maybe notify a connected WebSocket here to watch the folder on the server for changes.
+                if (false)
+                {
+                }
+
+                var $this = this;
+
+                var xhr = new $this.PrepareXHR({
+                    url: window.location.href,
+                    params: {
+                        action: 'file_explorer_refresh',
+                        path: JSON.stringify(folder.GetPathIDs()),
+                        xsrftoken: 'asdfasdf'
+                    },
+                    onsuccess: function(e) {
+                        var data = JSON.parse(e.target.responseText);
+                        console.log(data);
+
+                        if (data.success)
+                        {
+                            if ($this.IsMappedFolder(folder))  folder.SetEntries(data.entries);
+                        }
+                        else if (required)
+                        {
+                            $this.SetNamedStatusBarText('folder', $this.EscapeHTML('Failed to load folder.  ' + data.error));
+                        }
+                    },
+                    onerror: function(e) {
+                        // Maybe output a nice message if the request fails for some reason.
+                        // if (required)  $this.SetNamedStatusBarText('folder', 'Failed to load folder.  Server error.');
+
+                        console.log(e);
+                    }
+                });
+
+                xhr.Send();
+            },
+            onitemcontextmenucreate: function(entry, elem) {
+                return [
+                    {id: 'open-php56', name: 'Direct Link (php5.6)', icon: 'se_explorer_popup_item_icon_link'},
+                    {id: 'open-php74', name: 'Direct Link (php7.4)', icon: 'se_explorer_popup_item_icon_link'},
+                    {id: 'open-php82', name: 'Direct Link (php8.2)', icon: 'se_explorer_popup_item_icon_link'},
+                ]
+            },
+            onitemcontextmenuselect: function(id, elem, entry) {
+                switch (id) {
+                    case 'open-php56': window.open("http://localhost:8056" + entry.link, "_blank"); break;
+                    case 'open-php74': window.open("http://localhost:8074" + entry.link, "_blank"); break;
+                    case 'open-php82': window.open("http://localhost:8082" + entry.link, "_blank"); break;
+                }
+            },
+        });
+    </script>
+</body>
+</html>
