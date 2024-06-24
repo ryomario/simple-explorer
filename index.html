@@ -236,7 +236,7 @@
             messagetimeout: 2000,
             displayunits: 'iec_windows',
             initpath: [
-                [ '', 'htdocs (/)' ]
+                [ '', 'example root (/)' ]
             ],
             // doubleclickdelay: 10000,
             langmap: {
@@ -248,7 +248,7 @@
                 'Size': '',
                 'Modified': '',
                 '{0} items': '',
-                'Loading...': 'Waiting for 1 second . . .',
+                'Loading...': '',
                 'This folder is empty.': ''
             },
             onrefresh: function(folder, required) {
@@ -271,7 +271,7 @@
                     {
                         $this.SetNamedStatusBarText('folder', $this.EscapeHTML('Failed to load folder.  ' + data.error));
                     }
-                }, 1000);
+                }, 500);
             },
             onopenfile: function(folder, entry) {
                 alert(entry.name + ' opened!');
