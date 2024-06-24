@@ -103,6 +103,135 @@
     </div>
 
     <script>
+        const dummy_api_response = {
+            "": {
+                "success": true,
+                "entries": [
+                    {
+                        "id": "Empty Folder",
+                        "name": "Empty Folder",
+                        "type": "folder",
+                        "hash": "91f604098a4b7d853ca7c45208bad451",
+                        "link": "/Empty Folder",
+                        "mode": "drwxrwxr-x",
+                        "owner": "ryomario (1000)",
+                        "group": "ryomario (1000)",
+                        "modified": "14/11/2023 06:44",
+                        "items_count": 0
+                    },
+                    {
+                        "id": "Only 1 file",
+                        "name": "Only 1 file",
+                        "type": "folder",
+                        "hash": "ea5e37bbe4d1f418ae112f4595564474",
+                        "link": "/Only 1 file",
+                        "mode": "drwxrwxr-x",
+                        "owner": "ryomario (1000)",
+                        "group": "ryomario (1000)",
+                        "modified": "12/02/2024 04:14",
+                        "items_count": 1
+                    },
+                    {
+                        "id": "Error Folder",
+                        "name": "Error Folder",
+                        "type": "folder",
+                        "hash": "3f3f0e9dd022e4ce0724d2b09e9b2ff7",
+                        "link": "/Error Folder",
+                        "mode": "drwxrwxr-x",
+                        "owner": "root (0)",
+                        "group": "root (0)",
+                        "modified": "06/02/2024 07:43",
+                        "items_count": 0
+                    },
+                    {
+                        "id": "Server Error Folder",
+                        "name": "Server Error Folder",
+                        "type": "folder",
+                        "hash": "3f3f0e9dd022e4ce0724d2b09e9b2ff7",
+                        "link": "/Error Folder",
+                        "mode": "drwxrwxr-x",
+                        "owner": "ryomario (1000)",
+                        "group": "root (0)",
+                        "modified": "06/05/2024 09:03",
+                        "items_count": 0
+                    },
+                    {
+                        "id": "file.php",
+                        "name": "file.php",
+                        "type": "file",
+                        "hash": "016e87948b2b773a918ab682e431aeb0",
+                        "link": "/file.php",
+                        "mode": "-rw-rw-r--",
+                        "owner": "ryomario (1000)",
+                        "group": "www-data (33)",
+                        "modified": "04/03/2024 08:20",
+                        "size": 197728
+                    },
+                    {
+                        "id": "index.php",
+                        "name": "index.php",
+                        "type": "file",
+                        "hash": "1cc48bbb739021a1ad45898d6f33500f",
+                        "link": "/index.php",
+                        "mode": "-rw-r--r--",
+                        "owner": "ryomario (1000)",
+                        "group": "www-data (33)",
+                        "modified": "14/06/2024 04:43",
+                        "size": 484
+                    },
+                    {
+                        "id": "style.css",
+                        "name": "style.css",
+                        "type": "file",
+                        "hash": "591d70802d14ebfab6f6dd6dbe9e852d",
+                        "link": "/style.css",
+                        "mode": "-rw-r--r--",
+                        "owner": "root (0)",
+                        "group": "www-data (33)",
+                        "modified": "27/02/2017 09:36",
+                        "size": 177
+                    },
+                    {
+                        "id": "applications.html",
+                        "name": "applications.html",
+                        "type": "file",
+                        "hash": "50bc5bc558b8af2cfa44cbde4f1c4e9b",
+                        "link": "/applications.html",
+                        "mode": "-rw-r--r--",
+                        "owner": "root (0)",
+                        "group": "www-data (33)",
+                        "modified": "27/02/2017 09:36",
+                        "size": 3607
+                    }
+                ]
+            },
+            '/Empty Folder': {
+                "success": true,
+                "entries": []
+            },
+            '/Only 1 file': {
+                "success": true,
+                "entries": [
+                    {
+                        "id": "index.html",
+                        "name": "index.html",
+                        "type": "file",
+                        "hash": "50bc5bc558b8af2cfa44cbde4f1c4e9b",
+                        "link": "/index.html",
+                        "mode": "-rw-r--r--",
+                        "owner": "ryomario (1000)",
+                        "group": "www-data (33)",
+                        "modified": "27/02/2018 19:06",
+                        "size": 5607
+                    }
+                ]
+            },
+            '/Error Folder': {
+                "success": false,
+                "error": "Permission denied."
+            },
+        }
+
         new SimpleExplorer(document.getElementById('explorer'),{
             messagetimeout: 2000,
             displayunits: 'iec_windows',
@@ -111,73 +240,50 @@
             ],
             // doubleclickdelay: 10000,
             langmap: {
-                'Action': '#',
-                'Name': 'Nama',
-                'Mode': 'Izin',
-                'Owner': 'Pemilik',
-                'Group': 'Grup',
-                'Size': 'Ukuran',
-                'Modified': 'Terakhir diubah',
-                '{0} items': '{0} item',
-                'Loading...': 'Memuat . . .',
-                'This folder is empty.': 'Folder ini kosong.'
+                'Action': '',
+                'Name': '',
+                'Mode': '',
+                'Owner': '',
+                'Group': '',
+                'Size': '',
+                'Modified': '',
+                '{0} items': '',
+                'Loading...': 'Waiting for 1 second . . .',
+                'This folder is empty.': ''
             },
             onrefresh: function(folder, required) {
-                // Maybe notify a connected WebSocket here to watch the folder on the server for changes.
-                if (false)
-                {
-                }
-
+                const path = folder.GetPathIDs().join('/');
                 var $this = this;
 
-                var xhr = new $this.PrepareXHR({
-                    url: '/simple-explorer/backend/se_explorer_api.php',
-                    params: {
-                        action: 'se_explorer_refresh',
-                        path: JSON.stringify(folder.GetPathIDs())
-                    },
-                    onsuccess: function(e) {
-                        var data = JSON.parse(e.target.responseText);
-                        // console.log(data);
+                setTimeout(() => {
+                    const data = dummy_api_response[path];
 
-                        if (data.success)
-                        {
-                            if ($this.IsMappedFolder(folder))  folder.SetEntries(data.entries);
-                        }
-                        else if (required)
-                        {
-                            $this.SetNamedStatusBarText('folder', $this.EscapeHTML('Failed to load folder.  ' + data.error));
-                        }
-                    },
-                    onerror: function(e) {
-                        // Maybe output a nice message if the request fails for some reason.
-                        if (required) $this.SetNamedStatusBarText('folder', 'Failed to load folder.  Server error.');
-
-                        console.log(e);
+                    if(!data && required){
+                        $this.SetNamedStatusBarText('folder', 'Failed to load folder.  Server error.');
+                        return;
                     }
-                });
 
-                xhr.Send();
+                    if (data.success)
+                    {
+                        if ($this.IsMappedFolder(folder))  folder.SetEntries(data.entries);
+                    }
+                    else if (required)
+                    {
+                        $this.SetNamedStatusBarText('folder', $this.EscapeHTML('Failed to load folder.  ' + data.error));
+                    }
+                }, 1000);
             },
             onopenfile: function(folder, entry) {
-                // console.log(folder.GetPath().map(o => o[0]).join());
-                // console.log(entry.link);
-                window.open(entry.link,"_blank");
+                alert(entry.name + ' opened!');
             },
             onitemcontextmenucreate: function(entry, elem) {
                 return [
-                    {id: 'open-current', name: 'Direct Link', icon: 'se_explorer_popup_item_icon_link'},
-                    {id: 'open-php56', name: 'Direct Link (php5.6)', icon: 'se_explorer_popup_item_icon_link'},
-                    {id: 'open-php74', name: 'Direct Link (php7.4)', icon: 'se_explorer_popup_item_icon_link'},
-                    {id: 'open-php82', name: 'Direct Link (php8.2)', icon: 'se_explorer_popup_item_icon_link'},
+                    {id: 'custom', name: 'Custom option'},
                 ]
             },
             onitemcontextmenuselect: function(id, elem, entry) {
                 switch (id) {
-                    case 'open-current': window.open(entry.link, "_blank"); break;
-                    case 'open-php56': window.open("http://localhost:8056" + entry.link, "_blank"); break;
-                    case 'open-php74': window.open("http://localhost:8074" + entry.link, "_blank"); break;
-                    case 'open-php82': window.open("http://localhost:8082" + entry.link, "_blank"); break;
+                    case 'custom': alert("Custom option clicked!"); break;
                 }
             },
         });
