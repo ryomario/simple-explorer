@@ -781,6 +781,7 @@
 			capturebrowser: false,
             langmap: {},
 			onrefresh: null,
+			onopenfile: null,
 			onitemcontextmenucreate: null,
 			onitemcontextmenuselect: null,
 			doubleclickdelay: 500,
@@ -942,43 +943,43 @@
 
         let itemsheader_th = CreateNode('th',['se_explorer_items_header_col']);
         let itemsheader_btn = CreateNode('button',['se_explorer_items_header_cell','se_explorer_items_header_col_text'], {tabIndex: -1});
-        itemsheader_btn.textContent = 'Action';
+        itemsheader_btn.textContent = $this.Translate('Action');
         itemsheader_th.appendChild(itemsheader_btn);
         itemsheader_tr.appendChild(itemsheader_th);
 
         itemsheader_th = CreateNode('th',['se_explorer_items_header_col','flex-1','align_left']);
         itemsheader_btn = CreateNode('button',['se_explorer_items_header_cell','se_explorer_items_header_col_text'], {tabIndex: -1});
-        itemsheader_btn.textContent = 'Name';
+        itemsheader_btn.textContent = $this.Translate('Name');
         itemsheader_th.appendChild(itemsheader_btn);
         itemsheader_tr.appendChild(itemsheader_th);
 
         itemsheader_th = CreateNode('th',['se_explorer_items_header_col']);
         itemsheader_btn = CreateNode('button',['se_explorer_items_header_cell','se_explorer_items_header_col_text'], {tabIndex: -1});
-        itemsheader_btn.textContent = 'Mode';
+        itemsheader_btn.textContent = $this.Translate('Mode');
         itemsheader_th.appendChild(itemsheader_btn);
         itemsheader_tr.appendChild(itemsheader_th);
 
         itemsheader_th = CreateNode('th',['se_explorer_items_header_col']);
         itemsheader_btn = CreateNode('button',['se_explorer_items_header_cell','se_explorer_items_header_col_text'], {tabIndex: -1});
-        itemsheader_btn.textContent = 'Owner';
+        itemsheader_btn.textContent = $this.Translate('Owner');
         itemsheader_th.appendChild(itemsheader_btn);
         itemsheader_tr.appendChild(itemsheader_th);
 
         itemsheader_th = CreateNode('th',['se_explorer_items_header_col']);
         itemsheader_btn = CreateNode('button',['se_explorer_items_header_cell','se_explorer_items_header_col_text'], {tabIndex: -1});
-        itemsheader_btn.textContent = 'Group';
+        itemsheader_btn.textContent = $this.Translate('Group');
         itemsheader_th.appendChild(itemsheader_btn);
         itemsheader_tr.appendChild(itemsheader_th);
 
         itemsheader_th = CreateNode('th',['se_explorer_items_header_col']);
         itemsheader_btn = CreateNode('button',['se_explorer_items_header_cell','se_explorer_items_header_col_text'], {tabIndex: -1});
-        itemsheader_btn.textContent = 'Size';
+        itemsheader_btn.textContent = $this.Translate('Size');
         itemsheader_th.appendChild(itemsheader_btn);
         itemsheader_tr.appendChild(itemsheader_th);
 
         itemsheader_th = CreateNode('th',['se_explorer_items_header_col']);
         itemsheader_btn = CreateNode('button',['se_explorer_items_header_cell','se_explorer_items_header_col_text'], {tabIndex: -1});
-        itemsheader_btn.textContent = 'Modified';
+        itemsheader_btn.textContent = $this.Translate('Modified');
         itemsheader_th.appendChild(itemsheader_btn);
         itemsheader_tr.appendChild(itemsheader_th);
 
@@ -1037,7 +1038,8 @@
 		};
 
 		if ($this.settings.onrefresh)  $this.addEventListener('refresh_folder', $this.settings.onrefresh);
-		if ($this.settings.onitemcontextmenucreated)  $this.addEventListener('item_contextmenu_created', $this.settings.onitemcontextmenucreated);
+		if ($this.settings.onopenfile)  $this.addEventListener('open_file', $this.settings.onopenfile);
+		// if ($this.settings.onitemcontextmenucreated)  $this.addEventListener('item_contextmenu_created', $this.settings.onitemcontextmenucreated);
 		if ($this.settings.onitemcontextmenuselect)  $this.addEventListener('item_contextmenu_select', $this.settings.onitemcontextmenuselect);
 
 		var selecteditemsmap = {}, numselecteditems = 0, focuseditem = false, lastanchorpos = 0, popupmenu = null;
@@ -2065,7 +2067,9 @@
 									if(parentelem.offsetWidth < (e.pageX + popupelem.offsetWidth)){
 										popupelem.style.left = (e.pageX - popupelem.offsetWidth) + 'px'
 									} else popupelem.style.left = (e.pageX) + 'px';
-									popupelem.style.top = (e.pageY) + 'px';
+									if(parentelem.offsetHeight < (e.pageY + popupelem.offsetHeight)){
+										popupelem.style.top = (e.pageY - popupelem.offsetHeight) + 'px'
+									} else popupelem.style.top = (e.pageY) + 'px';
 								},
 
 								onselected: function(id, item, lastelem, etype) {

@@ -1,19 +1,3 @@
-<?php
-	// Note that this example is insecure as it is missing user checks, XSRF/CSRF token checking/generation, etc.
-	// The /files/ and /thumbs/ directories need to be writeable by the web server user (e.g. www-data).
-
-	// require_once "../js-fileexplorer/server-side-helpers/file_explorer_fs_helper.php";
-    require_once "./se_explorer_api.php";
-
-	$options = array(
-		"base_url" => "/",
-		"dot_folders" => false,  // .git, .svn, .DS_Store
-		"allowed_exts" => ".jpg, .jpeg, .png, .gif, .svg, .txt, .php, .html, .sql, .psql, .pgsql, .ttf, .woff, .woff2, .css, .js, .ts",
-		"allow_empty_ext" => true,
-	);
-
-	SimpleExplorerAPI::HandleActions("action", "file_explorer_", "/home/ryomario/Documents/lampp/htdocs", $options);
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -123,10 +107,21 @@
             messagetimeout: 2000,
             displayunits: 'iec_windows',
             initpath: [
-                [ '', 'htdocs (/)', { canmodify: false } ]
+                [ '', 'htdocs (/)' ]
             ],
             // doubleclickdelay: 10000,
-            langmap: {},
+            langmap: {
+                'Action': '#',
+                'Name': 'Nama',
+                'Mode': 'Izin',
+                'Owner': 'Pemilik',
+                'Group': 'Grup',
+                'Size': 'Ukuran',
+                'Modified': 'Terakhir diubah',
+                '{0} items': '{0} item',
+                'Loading...': 'Memuat . . .',
+                'This folder is empty.': 'Folder ini kosong.'
+            },
             onrefresh: function(folder, required) {
                 // Maybe notify a connected WebSocket here to watch the folder on the server for changes.
                 if (false)
@@ -136,15 +131,14 @@
                 var $this = this;
 
                 var xhr = new $this.PrepareXHR({
-                    url: window.location.href,
+                    url: '/simple-explorer/backend/se_explorer_api.php',
                     params: {
-                        action: 'file_explorer_refresh',
-                        path: JSON.stringify(folder.GetPathIDs()),
-                        xsrftoken: 'asdfasdf'
+                        action: 'se_explorer_refresh',
+                        path: JSON.stringify(folder.GetPathIDs())
                     },
                     onsuccess: function(e) {
                         var data = JSON.parse(e.target.responseText);
-                        console.log(data);
+                        // console.log(data);
 
                         if (data.success)
                         {
@@ -157,7 +151,7 @@
                     },
                     onerror: function(e) {
                         // Maybe output a nice message if the request fails for some reason.
-                        // if (required)  $this.SetNamedStatusBarText('folder', 'Failed to load folder.  Server error.');
+                        if (required) $this.SetNamedStatusBarText('folder', 'Failed to load folder.  Server error.');
 
                         console.log(e);
                     }
@@ -165,8 +159,14 @@
 
                 xhr.Send();
             },
+            onopenfile: function(folder, entry) {
+                // console.log(folder.GetPath().map(o => o[0]).join());
+                // console.log(entry.link);
+                window.open(entry.link,"_blank");
+            },
             onitemcontextmenucreate: function(entry, elem) {
                 return [
+                    {id: 'open-current', name: 'Direct Link', icon: 'se_explorer_popup_item_icon_link'},
                     {id: 'open-php56', name: 'Direct Link (php5.6)', icon: 'se_explorer_popup_item_icon_link'},
                     {id: 'open-php74', name: 'Direct Link (php7.4)', icon: 'se_explorer_popup_item_icon_link'},
                     {id: 'open-php82', name: 'Direct Link (php8.2)', icon: 'se_explorer_popup_item_icon_link'},
@@ -174,6 +174,7 @@
             },
             onitemcontextmenuselect: function(id, elem, entry) {
                 switch (id) {
+                    case 'open-current': window.open(entry.link, "_blank"); break;
                     case 'open-php56': window.open("http://localhost:8056" + entry.link, "_blank"); break;
                     case 'open-php74': window.open("http://localhost:8074" + entry.link, "_blank"); break;
                     case 'open-php82': window.open("http://localhost:8082" + entry.link, "_blank"); break;

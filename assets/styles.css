@@ -346,6 +346,7 @@ body, .se_explorer {
     font-weight: bold;
     color: var(--color-gray);
     text-align: inherit;
+    text-wrap: nowrap;
 }
 
 .se_explorer_items_scroll_wrap {

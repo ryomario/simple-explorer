@@ -364,3 +364,12 @@ class SimpleExplorerAPI
         return false;
     }
 }
+
+$options = array(
+    "base_url" => "/",
+    "dot_folders" => false,  // .git, .svn, .DS_Store
+    "allowed_exts" => ".jpg, .jpeg, .png, .gif, .svg, .txt, .php, .html, .sql, .psql, .pgsql, .ttf, .woff, .woff2, .css, .js, .ts",
+    "allow_empty_ext" => true,
+);
+
+SimpleExplorerAPI::HandleActions("action", "se_explorer_", "/home/ryomario/Documents/lampp/htdocs", $options);
